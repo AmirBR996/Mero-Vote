@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/header/Navbar";
 import Footer from "../components/header/Footer";
-import { getElections } from "../api/elections.api";
+import { getElections, getStats } from "../api/elections.api";
 
 /* Animated counter */
 const StatCounter = ({ end, label, suffix = "" }) => {
@@ -29,6 +29,31 @@ const StatCounter = ({ end, label, suffix = "" }) => {
 const Homepage = () => {
   const [elections, setElections] = useState([]);
   const [activeStep, setActiveStep] = useState(0);
+  const [stats, setStats] = useState({
+    totalVoters: 0,
+    totalElections: 0,
+    ongoingElections: 0,
+    voterTurnout: 0,
+  });
+  const [statsLoading, setStatsLoading] = useState(true);
+
+  // Auto-refresh stats every 5 seconds
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await getStats();
+        setStats(response.data || {});
+      } catch (error) {
+        console.error("Failed to fetch stats:", error);
+      } finally {
+        setStatsLoading(false);
+      }
+    };
+
+    fetchStats();
+    const statsInterval = setInterval(fetchStats, 5000);
+    return () => clearInterval(statsInterval);
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => setActiveStep((p) => (p + 1) % 3), 2500);
@@ -89,10 +114,10 @@ const Homepage = () => {
 
       {/* STATS */}
       <section className="py-16 px-6 grid grid-cols-2 md:grid-cols-4 gap-8 border-y border-[var(--nepal-red)]/10" style={{ background: "linear-gradient(180deg, var(--nepal-red-light), transparent)" }}>
-        <StatCounter end={1247832} label="Registered Voters" />
-        <StatCounter end={elections.length || 38} label="Total Elections" />
-        <StatCounter end={77} label="Districts" suffix="+" />
-        <StatCounter end={99} label="Reliability" suffix="%" />
+        <StatCounter end={stats.totalVoters} label="Registered Voters" />
+        <StatCounter end={stats.totalElections} label="Total Elections" />
+        <StatCounter end={stats.ongoingElections} label="Active Elections" />
+        <StatCounter end={stats.voterTurnout} label="Voter Turnout" suffix="%" />
       </section>
 
       {/* HOW IT WORKS */}

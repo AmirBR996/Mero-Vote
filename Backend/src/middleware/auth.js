@@ -1,13 +1,9 @@
 import { verifyToken } from '../utils/jwt.js';
 
-/**
- * Middleware to authenticate requests using JWT
- * Extracts token from Authorization header and verifies it
- */
 export const authenticateToken = (req, res, next) => {
   try {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+    const token = authHeader && authHeader.split(' ')[1];
 
     if (!token) {
       return res.status(401).json({
@@ -28,9 +24,6 @@ export const authenticateToken = (req, res, next) => {
   }
 };
 
-/**
- * Middleware to check if user is ADMIN
- */
 export const isAdmin = (req, res, next) => {
   if (req.user?.role !== 'ADMIN') {
     return res.status(403).json({
@@ -41,9 +34,6 @@ export const isAdmin = (req, res, next) => {
   next();
 };
 
-/**
- * Middleware to check if user is VOTER
- */
 export const isVoter = (req, res, next) => {
   if (req.user?.role !== 'VOTER') {
     return res.status(403).json({

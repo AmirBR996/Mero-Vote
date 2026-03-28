@@ -159,3 +159,29 @@ export const getCandidates = async (req, res) => {
         });
     }
 };
+
+export const getCandidatesByElection = async (req, res) => {
+    try {
+        const electionId = Number(req.params.electionId);
+        if (!Number.isInteger(electionId) || electionId <= 0) {
+            return res.status(400).json({ success: false, message: "Invalid election id" });
+        }
+
+        const candidatesList = await db
+            .select()
+            .from(candidates)
+            .where(eq(candidates.electionId, electionId));
+
+        return res.status(200).json({
+            success: true,
+            data: candidatesList,
+        });
+    } catch (error) {
+        console.error("Error retrieving candidates:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to retrieve candidates",
+            error: error.message,
+        });
+    }
+};

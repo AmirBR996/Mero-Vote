@@ -7,60 +7,53 @@ import { generateToken } from '../utils/jwt.js';
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    
-        // Input validation
-        if (!email || !password) {
-          return res.status(400).json({
-            success: false,
-            message: 'Email and password are required',
-          });
-        }
-    
-        // Find user by email
-        const userResult = await db
-          .select()
-          .from(users)
-          .where(eq(users.email, email));
-    
-        if (userResult.length === 0) {
-          return res.status(401).json({
-            success: false,
-            message: 'Invalid email or password',
-          });
-        }
-    
-        const user = userResult[0];
-    
-        // Compare passwords
-        const isPasswordValid = await comparePassword(password, user.password);
-    
-        if (!isPasswordValid) {
-          return res.status(401).json({
-            success: false,
-            message: 'Invalid email or password',
-          });
-        }
-    
-        // Generate JWT token
-        const token = generateToken({
-          id: user.id,
-          email: user.email,
-          role: user.role,
-        });
-    
-        // Return user data without password
-        const { password: _, ...userWithoutPassword } = user;
-        // Parse faceDescriptor if it's a string
-        if (userWithoutPassword.faceDescriptor && typeof userWithoutPassword.faceDescriptor === 'string') {
-          try { userWithoutPassword.faceDescriptor = JSON.parse(userWithoutPassword.faceDescriptor); } catch(e) {}
-        }
-    
-        return res.status(200).json({
-          success: true,
-          message: 'Login successful',
-          access_token: token,
-          data: userWithoutPassword,
-        });
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email and password are required',
+      });
+    }
+
+    const userResult = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email));
+
+    if (userResult.length === 0) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid email or password',
+      });
+    }
+
+    const user = userResult[0];
+    const isPasswordValid = await comparePassword(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid email or password',
+      });
+    }
+
+    const token = generateToken({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    });
+
+    const { password: _, ...userWithoutPassword } = user;
+    if (userWithoutPassword.faceDescriptor && typeof userWithoutPassword.faceDescriptor === 'string') {
+      try { userWithoutPassword.faceDescriptor = JSON.parse(userWithoutPassword.faceDescriptor); } catch(e) {}
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Login successful',
+      access_token: token,
+      data: userWithoutPassword,
+    });
   } catch (error) {
     console.error('Login error:', error);
     return res.status(500).json({
@@ -74,113 +67,103 @@ export const login = async (req, res) => {
 export const register = async (req, res) => {
   try {
     const { name, email, password, dob, district, citizenNo, photoUrl, faceDescriptor } = req.body;
- 
-     // Input validation
-     if (!name || !email || !password || !dob || !district || !citizenNo || !photoUrl) {
-       return res.status(400).json({
-         success: false,
-         message: 'All fields are required',
-       });
-     }
- 
-     // Email validation
-     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-     if (!emailRegex.test(email)) {
-       return res.status(400).json({
-         success: false,
-         message: 'Invalid email format',
-       });
-     }
- 
-     // Citizenship number validation
-     const citizenNumRegex = /^\d{2}-\d{2}-\d{2}-\d{5}$|^\d{2}-\d{6}-\d{5}$/;
-     if (!citizenNumRegex.test(citizenNo)) {
-       return res.status(400).json({
-         success: false,
-         message: 'Invalid citizenship number format. Use 11-11-11-11111 or 11-111111-11111',
-       });
-     }
- 
-     // Password strength validation
-     const passwordValidation = validatePasswordStrength(password);
-     if (!passwordValidation.isValid) {
-       return res.status(400).json({
-         success: false,
-         message: passwordValidation.message,
-       });
-     }
- 
-     // Check if user already exists
-     const existingUser = await db
-       .select()
-       .from(users)
-       .where(eq(users.email, email));
- 
-     if (existingUser.length > 0) {
-       return res.status(409).json({
-         success: false,
-         message: 'Email already registered',
-       });
-     }
- 
-     // Check if citizen number already exists
-     const existingCitizen = await db
-       .select()
-       .from(users)
-       .where(eq(users.citizenNo, citizenNo));
- 
-     if (existingCitizen.length > 0) {
-       return res.status(409).json({
-         success: false,
-         message: 'Citizen number already registered',
-       });
-     }
- 
-     // Hash password
-     const hashedPassword = await hashPassword(password);
- 
-     // Create new user
-     const newUser = await db
-       .insert(users)
-       .values({
-         name,
-         email,
-         password: hashedPassword,
-         dob: new Date(dob),
-         district,
-         citizenNo,
-         photoUrl,
-         faceDescriptor: faceDescriptor ? JSON.stringify(faceDescriptor) : null,
-       })
-       .returning({
-         id: users.id,
-         name: users.name,
-         email: users.email,
-         role: users.role,
-         district: users.district,
-         photoUrl: users.photoUrl,
-         faceDescriptor: users.faceDescriptor,
-       });
- 
-     // Generate JWT token
-     const token = generateToken({
-       id: newUser[0].id,
-       email: newUser[0].email,
-       role: newUser[0].role,
-     });
 
-     // Parse face descriptor if it's a string
-     const userData = { ...newUser[0] };
-     if (userData.faceDescriptor && typeof userData.faceDescriptor === 'string') {
-       try { userData.faceDescriptor = JSON.parse(userData.faceDescriptor); } catch(e) {}
-     }
- 
-     return res.status(201).json({
-       success: true,
-       message: 'User registered successfully with face verification',
-       access_token: token,
-       data: userData,
-     });
+    if (!name || !email || !password || !dob || !district || !citizenNo || !photoUrl) {
+      return res.status(400).json({
+        success: false,
+        message: 'All fields are required',
+      });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid email format',
+      });
+    }
+
+    const citizenNumRegex = /^\d{2}-\d{2}-\d{2}-\d{5}$|^\d{2}-\d{6}-\d{5}$/;
+    if (!citizenNumRegex.test(citizenNo)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid citizenship number format. Use 11-11-11-11111 or 11-111111-11111',
+      });
+    }
+
+    const passwordValidation = validatePasswordStrength(password);
+    if (!passwordValidation.isValid) {
+      return res.status(400).json({
+        success: false,
+        message: passwordValidation.message,
+      });
+    }
+
+    const existingUser = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email));
+
+    if (existingUser.length > 0) {
+      return res.status(409).json({
+        success: false,
+        message: 'Email already registered',
+      });
+    }
+
+    const existingCitizen = await db
+      .select()
+      .from(users)
+      .where(eq(users.citizenNo, citizenNo));
+
+    if (existingCitizen.length > 0) {
+      return res.status(409).json({
+        success: false,
+        message: 'Citizen number already registered',
+      });
+    }
+
+    const hashedPassword = await hashPassword(password);
+
+    const newUser = await db
+      .insert(users)
+      .values({
+        name,
+        email,
+        password: hashedPassword,
+        dob: new Date(dob),
+        district,
+        citizenNo,
+        photoUrl,
+        faceDescriptor: faceDescriptor ? JSON.stringify(faceDescriptor) : null,
+      })
+      .returning({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        role: users.role,
+        district: users.district,
+        photoUrl: users.photoUrl,
+        faceDescriptor: users.faceDescriptor,
+      });
+
+    const token = generateToken({
+      id: newUser[0].id,
+      email: newUser[0].email,
+      role: newUser[0].role,
+    });
+
+    const userData = { ...newUser[0] };
+    if (userData.faceDescriptor && typeof userData.faceDescriptor === 'string') {
+      try { userData.faceDescriptor = JSON.parse(userData.faceDescriptor); } catch(e) {}
+    }
+
+    return res.status(201).json({
+      success: true,
+      message: 'User registered successfully with face verification',
+      access_token: token,
+      data: userData,
+    });
   } catch (error) {
     console.error('Registration error:', error);
     return res.status(500).json({
@@ -203,7 +186,6 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    // Input validation
     if (!name || !dob || !district || !photoUrl) {
       return res.status(400).json({
         success: false,
@@ -211,7 +193,6 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    // Update user profile
     const updatedUser = await db
       .update(users)
       .set({

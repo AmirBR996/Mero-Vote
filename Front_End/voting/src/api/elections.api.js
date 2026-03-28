@@ -18,6 +18,15 @@ export const getElectionById = async (id) => {
   }
 };
 
+export const getStats = async () => {
+  try {
+    const response = await api.get("/elections/stats");
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
 export const createElection = async (data) => {
   try {
     const response = await api.post("/elections", data);
