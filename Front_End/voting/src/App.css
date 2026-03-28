@@ -1,0 +1,253 @@
+@import url("https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap");
+@import "tailwindcss";
+
+:root {
+  /* Nepal Flag Inspired Palette */
+  --nepal-red: #DC143C;
+  --nepal-red-dark: #a8102e;
+  --nepal-red-light: rgba(220, 20, 60, 0.15);
+  --nepal-blue: #003893;
+  --nepal-blue-dark: #002766;
+  --nepal-blue-light: rgba(0, 56, 147, 0.12);
+  --nepal-gold: #E8A317;
+  --nepal-gold-light: rgba(232, 163, 23, 0.18);
+  --nepal-white: #FEFCF8;
+  --nepal-cream: #FDF8F0;
+
+  /* Semantic Tokens */
+  --bg: #0B1426;
+  --bg-elevated: #111D35;
+  --bg-card: #152040;
+  --bg-light: var(--nepal-cream);
+  --surface-dark: #0B1426;
+  --surface-muted: #152040;
+  --accent: var(--nepal-red);
+  --accent-strong: var(--nepal-red-dark);
+  --accent-soft: var(--nepal-red-light);
+  --accent-secondary: var(--nepal-blue);
+  --accent-gold: var(--nepal-gold);
+  --text-primary: #F0EDE8;
+  --text-muted: #8B97AD;
+  --text-on-dark: #F0EDE8;
+  --text-dark: #1A1A2E;
+  --border: rgba(220, 20, 60, 0.2);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --glass: rgba(11, 20, 38, 0.85);
+  --glass-light: rgba(255, 255, 255, 0.04);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Mukta", sans-serif;
+  font-weight: 700;
+}
+
+#root {
+  min-height: 100vh;
+  background-color: transparent;
+  color: var(--text-primary);
+  margin: 0 auto;
+}
+
+/* Nepal decorative triangle pattern */
+.nepal-pattern {
+  position: relative;
+}
+.nepal-pattern::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--nepal-red), var(--nepal-blue), var(--nepal-gold), var(--nepal-red));
+}
+
+/* Glass card */
+.glass-card {
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, var(--nepal-red) 0%, var(--nepal-gold) 50%, var(--nepal-red) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Button styles */
+.btn-primary {
+  background: linear-gradient(135deg, var(--nepal-red), var(--nepal-red-dark));
+  color: white;
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(220, 20, 60, 0.35);
+}
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--nepal-red);
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  border: 2px solid var(--nepal-red);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.btn-secondary:hover {
+  background: var(--nepal-red);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.btn-blue {
+  background: linear-gradient(135deg, var(--nepal-blue), var(--nepal-blue-dark));
+  color: white;
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.btn-blue:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 56, 147, 0.35);
+}
+
+/* Input styles */
+.input-nepal {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border-subtle);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+.input-nepal::placeholder {
+  color: var(--text-muted);
+}
+.input-nepal:focus {
+  border-color: var(--nepal-red);
+  box-shadow: 0 0 0 3px var(--nepal-red-light);
+}
+
+.select-nepal {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border-subtle);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238B97AD' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+}
+.select-nepal:focus {
+  border-color: var(--nepal-red);
+  box-shadow: 0 0 0 3px var(--nepal-red-light);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--nepal-red);
+  border-radius: 3px;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(220, 20, 60, 0.2); }
+  50% { box-shadow: 0 0 40px rgba(220, 20, 60, 0.4); }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Nepal-themed badge */
+.badge-nepal {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.badge-ongoing {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+.badge-upcoming {
+  background: var(--nepal-blue-light);
+  color: #60a5fa;
+}
+.badge-completed {
+  background: var(--nepal-gold-light);
+  color: var(--nepal-gold);
+}
