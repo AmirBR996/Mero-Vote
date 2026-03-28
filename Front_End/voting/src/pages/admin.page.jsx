@@ -71,7 +71,19 @@ export default function AdminPage() {
   }, [users, candidates, elections]);
 
   /* Candidate handlers */
-  const resetCandidateForm = () => { setCandidateForm(emptyCandidate); setEditingCandidateId(null); };
+  const resetCandidateForm = () => { 
+    const firstElectionId = elections.length > 0 ? elections[0].id.toString() : "1";
+    setCandidateForm({ 
+      name: "", 
+      party: "", 
+      position: "", 
+      district: "", 
+      photoUrl: "", 
+      bio: "", 
+      electionId: firstElectionId 
+    }); 
+    setEditingCandidateId(null); 
+  };
   const handleCandidateInput = (e) => setCandidateForm((p) => ({ ...p, [e.target.name]: e.target.value }));
   const handleEditCandidate = (c) => {
     setEditingCandidateId(c.id);
@@ -406,10 +418,13 @@ export default function AdminPage() {
                       <input name="photoUrl" value={candidateForm.photoUrl} onChange={handleCandidateInput} required className="input-nepal" placeholder="https://…" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Election ID</label>
-                      <select name="electionId" value={candidateForm.electionId} onChange={handleCandidateInput} required className="select-nepal">
-                        {elections.map((el) => <option key={el.id} value={el.id}>{el.title} (#{el.id})</option>)}
-                        {elections.length === 0 && <option value="1">Election #1</option>}
+                      <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Election</label>
+                      <select name="electionId" value={candidateForm.electionId} onChange={handleCandidateInput} required className="select-nepal" disabled={elections.length === 0}>
+                        {elections.length === 0 ? (
+                          <option value="">No elections available</option>
+                        ) : (
+                          elections.map((el) => <option key={el.id} value={el.id}>{el.title} (#{el.id})</option>)
+                        )}
                       </select>
                     </div>
                   </div>

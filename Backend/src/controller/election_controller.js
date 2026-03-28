@@ -1,6 +1,6 @@
 import { eq, sql, count } from "drizzle-orm";
 import { db } from "../db/index.js";
-import { elections, candidates, electionCandidates, users, votes } from "../db/schema.js";
+import { elections, candidates, users, votes } from "../db/schema.js";
 
 export const getElections = async (req, res) => {
   try {

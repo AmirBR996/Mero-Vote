@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "../db/index.js";
-import { candidates } from "../db/schema.js";
+import { candidates, elections } from "../db/schema.js";
 
 export const createCandidate = async (req, res) => {
     try{
@@ -13,6 +13,20 @@ export const createCandidate = async (req, res) => {
             });
         }
 
+        const electionIdNum = parseInt(electionId);
+        
+        const electionExists = await db
+            .select()
+            .from(elections)
+            .where(eq(elections.id, electionIdNum));
+        
+        if(electionExists.length === 0){
+            return res.status(404).json({
+                success: false,
+                message: `Election with ID ${electionIdNum} does not exist`
+            });
+        }
+
         const [candidate] = await db
         .insert(candidates)
         .values({
@@ -22,7 +36,7 @@ export const createCandidate = async (req, res) => {
             district,
             photoUrl,
             bio,
-            electionId: parseInt(electionId),
+            electionId: electionIdNum,
             voteCount: 0
         })
         .returning();
@@ -99,6 +113,20 @@ export const updateCandidate = async (req, res) => {
             });
         }
         
+        const electionIdNum = parseInt(electionId);
+        
+        const electionExists = await db
+            .select()
+            .from(elections)
+            .where(eq(elections.id, electionIdNum));
+        
+        if(electionExists.length === 0){
+            return res.status(404).json({
+                success: false,
+                message: `Election with ID ${electionIdNum} does not exist`
+            });
+        }
+        
         const [candidate] = await db
         .update(candidates)
         .set({
@@ -108,7 +136,7 @@ export const updateCandidate = async (req, res) => {
             district,
             photoUrl,
             bio,
-            electionId: parseInt(electionId),
+            electionId: electionIdNum,
             updatedAt: new Date()
         })
         .where(eq(candidates.id, id))

@@ -194,10 +194,10 @@ const Homepage = () => {
 
         <div className="grid grid-cols-2 gap-4">
           {[
-            { icon: "🔐", label: "Secure", desc: "End-to-end encryption" },
+            { icon: "🔐", label: "Secure", desc: "End-to-end secure" },
             { icon: "👤", label: "Face Verified", desc: "Biometric identity check" },
             { icon: "⚡", label: "Real-time", desc: "Instant vote counting" },
-            { icon: "🏛️", label: "Official", desc: "Government approved" },
+            { icon: "🏛️", label: "Official", desc: "College approved" },
           ].map((f, i) => (
             <div key={i} className="glass-card p-5 text-center group hover:border-[var(--nepal-red)]/30 transition-all">
               <div className="text-3xl mb-2">{f.icon}</div>
