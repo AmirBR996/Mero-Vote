@@ -7,7 +7,11 @@ export const login = async (data) => {
 
     return response.data;
   } catch (error) {
-    console.log(error);
+    console.log("Login error:", error);
+    // Return the backend error message if available, otherwise throw
+    if (error.response?.data?.message) {
+      throw new Error(error.response.data.message);
+    }
     throw error.response?.data || error;
   }
 };
@@ -20,7 +24,11 @@ export const register = async (data) => {
 
     return response.data;
   } catch (error) {
-    console.log(error);
+    console.log("Registration error:", error);
+    // Return the backend error message if available, otherwise throw
+    if (error.response?.data?.message) {
+      throw new Error(error.response.data.message);
+    }
     throw error.response?.data || error;
   }
 };

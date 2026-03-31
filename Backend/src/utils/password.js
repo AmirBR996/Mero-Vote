@@ -24,9 +24,16 @@ export const validatePasswordStrength = (password) => {
     hasNumber &&
     hasSpecialChar;
 
-  const message = !isValid
-    ? `Password must be at least ${minLength} characters and contain uppercase, lowercase, number, and special character`
-    : 'Password is strong';
+  let message = 'Password is strong';
+  if (!isValid) {
+    const missing = [];
+    if (password.length < minLength) missing.push(`at least ${minLength} characters`);
+    if (!hasUppercase) missing.push('uppercase letter');
+    if (!hasLowercase) missing.push('lowercase letter');
+    if (!hasNumber) missing.push('number');
+    if (!hasSpecialChar) missing.push('special character (!@#$%^&*, etc.)');
+    message = `Password must contain: ${missing.join(', ')}`;
+  }
 
   return { isValid, message };
 };

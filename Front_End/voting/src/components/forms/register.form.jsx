@@ -22,6 +22,32 @@ const RegisterForm = () => {
   const [faceDescriptor, setFaceDescriptor] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // Validate password strength - must meet backend requirements
+  const validatePassword = (password) => {
+    const minLength = 8;
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecial = /[!@#$%^&*()_+\-=\[\]{}|;:'",.<>?/`~]/.test(password);
+
+    if (password.length < minLength) {
+      return { valid: false, message: "Password must be at least 8 characters" };
+    }
+    if (!hasUppercase) {
+      return { valid: false, message: "Password must contain at least one uppercase letter" };
+    }
+    if (!hasLowercase) {
+      return { valid: false, message: "Password must contain at least one lowercase letter" };
+    }
+    if (!hasNumber) {
+      return { valid: false, message: "Password must contain at least one number" };
+    }
+    if (!hasSpecial) {
+      return { valid: false, message: "Password must contain at least one special character (!@#$%^&*, etc.)" };
+    }
+    return { valid: true, message: "" };
+  };
+
   const onChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -39,6 +65,14 @@ const RegisterForm = () => {
       toast.error("Passwords do not match");
       return;
     }
+
+    // Validate password strength BEFORE sending to backend
+    const passwordValidation = validatePassword(formData.password);
+    if (!passwordValidation.valid) {
+      toast.error(passwordValidation.message);
+      return;
+    }
+
     if (!formData.photoUrl) {
       toast.error("Please capture your face photo for verification");
       return;
@@ -151,6 +185,9 @@ const RegisterForm = () => {
             id="password" type="password" name="password" value={formData.password}
             onChange={onChange} placeholder="••••••••" required className="input-nepal"
           />
+          <p className="mt-2 text-xs text-[var(--text-muted)]">
+            Must contain: 8+ chars, uppercase, lowercase, number, special char (!@#$%, etc.)
+          </p>
         </div>
         <div>
           <label className="mb-1.5 block text-sm font-medium text-[var(--text-muted)]" htmlFor="c_password">
