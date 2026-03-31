@@ -1,6 +1,6 @@
 # Mero Vote - Online Voting System 🗳️
 
-A secure, modern online voting platform with facial recognition technology for voter verification. Built with Node.js, Express, React, and facial recognition capabilities.
+A secure, modern online voting platform with facial recognition technology for voter verification. Built with Node.js, Express, React,postres js and facial recognition capabilities.
 
 ## 🎯 Features
 
